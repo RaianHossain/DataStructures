@@ -68,4 +68,5 @@ int main()
 	S.Push(10);S.Print();
 	S.Pop();S.Print();
 	S.Push(12);S.Print();
+    cout<<S.Top()<<endl;
 }
