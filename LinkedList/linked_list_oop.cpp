@@ -45,7 +45,7 @@ class LinkedList {
         Node* temp = new Node();
         temp = head;
         if(head == NULL) {
-            cout<<"Linked list is empty"<<endl;
+            cout<<"The list is empty"<<endl;
             return;
         }
         while(temp != NULL) {
@@ -85,6 +85,54 @@ class LinkedList {
         temp->next = nThNode->next;
         free(nThNode);
     }
+    void deleteFromBeginning() {
+        if(head == NULL) {
+            cout<<"The list is empty"<<endl;
+            return;
+        }
+        Node* temp = head;
+        head = temp->next;
+        free(temp);
+        return;
+    }
+
+    void deleteFromEnd() {
+        if(head == NULL) {
+            cout<<"The list is empty"<<endl;
+            return;
+        }
+        if(head == tail) {
+            free(head);
+            head = tail = NULL;
+            return;
+        }
+        Node* temp = head;
+        Node* secondLast = NULL;
+        while(temp != NULL) {
+            if(temp->next != NULL) secondLast = temp;          
+            temp = temp->next;
+        }
+        free(secondLast->next);
+        secondLast->next = NULL;
+        tail = secondLast;
+        return;
+    }
+
+    int search(int n) {
+        if(head == NULL) {
+            return -1;
+        }
+        Node* temp = head;
+        int counter = 0;
+        while(temp != NULL) {
+            if(temp->data == n) {
+                return counter;
+            }
+            temp = temp->next;
+            counter++;
+        }
+        return -1;
+    }
 };
 
 int main()
@@ -94,10 +142,18 @@ int main()
     lst.insertEnd(3);
     lst.insertBegining(1);
     lst.insertEnd(4);
+    cout<<"After inserting: ";
     lst.print();
-    lst.deleteNode(5);
-    lst.deleteNode(4);
+    int pos = lst.search(4);
+    cout<<"Searching 4: ";
+    cout<<"Found at "<<pos<<endl;
+    lst.deleteFromBeginning();
+    cout<<"After deleting from beginning: ";
     lst.print();
+    lst.deleteFromEnd();
+    cout<<"After deleting from end: ";
+    lst.print();
+    cout<<endl;
 
     return 0;
 }

@@ -22,7 +22,7 @@ public:
         cout<<endl;
     }
 
-    void insert(int data) {
+    void insert(int data) { //inserting
         if(end == -1) {
             arr[++end] = data;
             return;
@@ -37,31 +37,47 @@ public:
         return;
     }
 
-    void search(int data) {
+    int search(int data) { //binary search
         if(end == -1) {
-            cout<<"Array is empty!"<<endl;
-            return;
+            return -1;
         }
         int lo = 0; 
-        int hi = end;
+        int hi = end+1;
         int mid;
         while(lo < hi) {
             mid = (lo + hi)/2;
             if(arr[mid] == data) {
-                cout<<data<<" found at index "<<mid<<endl;
-                return;
+                return mid;
             } else if(arr[mid] < data) {
                 lo = mid+1;
             } else {
                 hi = mid;
             }
         }
-        cout<<data<<" is not in the array"<<endl;
-        return;
+        return -1;
     }
 
-    void deleteData(int data) {
-        
+    void deleteByDataAll(int data) { //deletes all the matches
+        int pos = search(data);
+        if(pos == -1) {
+            return;
+        }
+        for(int i = pos; i < end; i++) {
+            arr[i] = arr[i+1];
+        }
+        end--;
+        deleteByDataAll(data);
+    }
+
+    void deleteByData(int data) { //deletes only the first match
+        int pos = search(data);
+        if(pos == -1) {
+            return;
+        }
+        for(int i = pos; i < end; i++) {
+            arr[i] = arr[i+1];
+        }
+        end--;
     }
 
 };
@@ -71,13 +87,21 @@ int main()
     SortedArray sr;
     sr.insert(1);
     sr.insert(3);
+    sr.insert(3);
     sr.insert(2);
     sr.insert(9);
     sr.insert(7);
     sr.insert(9);
-
-    sr.search(9);
-
+    cout<<"After insertion: ";
     sr.print();
-
+    cout<<"Searching Number 3: ";
+    cout<<"Found at "<<sr.search(3)<<endl;
+    cout<<"Delete by the(all the matches of 9): ";
+    sr.deleteByDataAll(9);
+    sr.print();
+    cout<<"Delete by the(Only the first match of 3): ";
+    sr.deleteByData(3);
+    sr.print();
+    cout<<endl;
+    return 0;
 }
