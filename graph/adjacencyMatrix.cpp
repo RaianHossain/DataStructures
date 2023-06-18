@@ -21,7 +21,7 @@ class Graph {
             return;
         }
 
-        void addEdge(char src, char dest) {
+        void addUndirectedEdge(char src, char dest) {
             int srcIndex = getIndex(src);
             int destIndex = getIndex(dest);
             if(srcIndex == -1 || destIndex == -1) {
@@ -30,6 +30,17 @@ class Graph {
             }
             edges[srcIndex][destIndex] = true;
             edges[destIndex][srcIndex] = true;
+            return;
+        }
+
+        void addDirectedEdge(char src, char dest) {
+            int srcIndex = getIndex(src);
+            int destIndex = getIndex(dest);
+            if(srcIndex == -1 || destIndex == -1) {
+                cout<<"Invalid vertices"<<endl;
+                return;
+            }
+            edges[srcIndex][destIndex] = true;
             return;
         }
 
@@ -56,8 +67,7 @@ class Graph {
             return -1;
         }
 
-        void bfs(char sr)
-        {
+        void bfs(char sr) {
             vector<bool> visited(sizeOfV, false);
             queue<int> q;
 
@@ -90,9 +100,8 @@ class Graph {
             }
         }
         
-        vector <bool> visitedDfs;
-        void dfs(char sr)
-        {
+        vector <int> visitedDfs;
+        void dfs(char sr) {
             int start = getIndex(sr);
             cout << vertices[start] << " ";
             visitedDfs[start] = true;
@@ -103,31 +112,121 @@ class Graph {
                 }
             }
         }
+
+        vector <int> discover;
+        vector <int> finish;
+        vector <int> previous;
+        vector <string> color;
+        int time;
+        void dfs() {
+            for(int i = 0; i <= sizeOfV; i++) {
+                color.push_back("white");
+                previous.push_back(-1);
+                discover.push_back(-1);
+                finish.push_back(-1);
+            }
+            time = 0;
+            for(int i = 0; i <= sizeOfV; i++) {
+                if(color[i] == "white") {
+                    DFS_Visit(i);
+                }
+            }
+            for(int i = 0; i <= sizeOfV; i++) {
+                cout<<vertices[i]<<" - Discover Time: "<<discover[i]<<" - Finish Time: "<<finish[i]<<endl;
+            }
+        }
+
+        void DFS_Visit(int currentNode) {
+            color[currentNode] = "gray";
+            time++;
+            discover[currentNode] = time;
+            for(int i = 0; i <= sizeOfV; i++) {
+                if(edges[currentNode][i] == true && color[i] == "white") {
+                    previous[i] = currentNode;
+                    DFS_Visit(i);
+                }
+            }
+
+            color[currentNode] = "black";
+            // cout<<vertices[currentNode]<<" ";
+            time++;
+            finish[currentNode] = time;
+        }
+
+        void isBipertite(char src) {
+            queue <int> q;
+            int source = getIndex(src);
+            q.push(source);
+
+            string color[sizeOfV] = {"white"};
+            color[source] = "red";
+
+            int currentNode;
+            while(!q.empty()) {
+                currentNode = q.front();
+                q.pop();
+
+                for(int i = 0; i <= sizeOfV; i++) {
+                    if(edges[currentNode][i] == 1) {
+                        if(color[i] == "white") {
+                            if(color[currentNode] == "red") {
+                                color[i] = "blue";
+                            } else {
+                                color[i] = "red";
+                            }
+                            q.push(i);
+                        }
+                    }
+                    if(color[currentNode] == color[i]) {
+                        cout<<"Not bipertite"<<endl;
+                        return;
+                    }
+                }
+
+            }
+            cout<<"Bipertite"<<endl;
+            return;
+        }
 };
 
 int main() {
-    Graph gp;
-    gp.addVertex('A');
-    gp.addVertex('B');
-    gp.addVertex('C');
-    gp.addVertex('D');
-    gp.addVertex('E');
+    Graph undirectedGP;
+    undirectedGP.addVertex('A');
+    undirectedGP.addVertex('B');
+    undirectedGP.addVertex('C');
+    undirectedGP.addVertex('D');
+    undirectedGP.addVertex('E');
 
-    gp.addEdge('A', 'B');
-    gp.addEdge('A', 'E');
-    gp.addEdge('B', 'C');
-    gp.addEdge('B', 'D');
-    gp.addEdge('C', 'D');
-    gp.addEdge('D', 'E');
-    gp.addEdge('A', 'E');
+    undirectedGP.addUndirectedEdge('A', 'B');
+    undirectedGP.addUndirectedEdge('A', 'E');
+    undirectedGP.addUndirectedEdge('B', 'C');
+    undirectedGP.addUndirectedEdge('B', 'D');
+    undirectedGP.addUndirectedEdge('C', 'D');
+    undirectedGP.addUndirectedEdge('D', 'E');
 
-    gp.printMatrix();
+    undirectedGP.printMatrix();
     cout<<endl<<endl;
     cout<<"Breadth First Search"<<endl;
-    gp.bfs('A');
+    undirectedGP.bfs('A');
     cout<<endl<<endl;
     cout<<"Depth First Search"<<endl;
-    gp.dfs('A');
-
+    undirectedGP.dfs('A');
     cout<<endl<<endl;
+    undirectedGP.isBipertite('A');
+    cout<<endl<<endl;
+
+    Graph directedGraph;
+    directedGraph.addVertex('A');
+    directedGraph.addVertex('B');
+    directedGraph.addVertex('C');
+    directedGraph.addVertex('D');
+
+    directedGraph.addDirectedEdge('A', 'D');
+    directedGraph.addDirectedEdge('B', 'A');
+    directedGraph.addDirectedEdge('B', 'C');
+    directedGraph.addDirectedEdge('C', 'D');
+    directedGraph.printMatrix();
+    directedGraph.dfs();
+
+
 }
